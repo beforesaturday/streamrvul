@@ -7,11 +7,17 @@
 <style>
   body {
     background-color: black;
+    color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  h1 {
+    color: #50C878;
+    margin-bottom: 20px;
   }
   video {
     max-width: 100%;
@@ -33,7 +39,9 @@
 </head>
 <body>
 
-<video id="video" controls autoplay muted>
+<h1>Stream Rvul</h1>
+
+<video id="video" controls muted>
   <source src="video.mp4" type="video/mp4" />
   Tu navegador no soporta video HTML5.
 </video>
@@ -43,10 +51,16 @@
 <script>
 const video = document.getElementById('video');
 
-video.addEventListener('loadedmetadata', () => {
+function startVideo() {
   video.currentTime = Math.random() * video.duration;
-  video.play();
-});
+  video.play().catch(() => {
+    // En caso de bloqueo, intentar mutear y reproducir
+    video.muted = true;
+    video.play();
+  });
+}
+
+video.addEventListener('loadedmetadata', startVideo);
 
 video.addEventListener('ended', () => {
   let contador = localStorage.getItem('loopCount');
