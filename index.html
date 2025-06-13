@@ -7,7 +7,7 @@
   <style>
     body {
       background-color: black;
-      color: white;
+      color: #ccc; /* texto gris en todo */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -16,22 +16,28 @@
       font-family: Arial, sans-serif;
     }
     h1 {
-      color: #50C878;
+      color: #ccc; /* gris */
       margin-bottom: 10px;
     }
     #contador {
       font-weight: bold;
       margin-bottom: 20px;
-      color: #50C878;
+      color: #ccc;
     }
     video {
       max-width: 100%;
       height: 540px;
-      border: 3px solid #50C878;
+      border: 3px solid #ccc;
       border-radius: 8px;
     }
+    #currentTimeDisplay {
+      margin-top: 8px;
+      font-weight: bold;
+      color: #ccc;
+      font-size: 18px;
+    }
     a {
-      color: #50C878;
+      color: #ccc;
       font-weight: bold;
       text-decoration: none;
       margin-top: 15px;
@@ -41,7 +47,7 @@
       background: #111;
       padding: 20px;
       border-radius: 10px;
-      border: 2px solid #50C878;
+      border: 2px solid #ccc;
       max-width: 400px;
       width: 100%;
       color: #ccc; /* Gris claro para el texto del formulario */
@@ -60,9 +66,10 @@
       padding: 10px;
       border-radius: 5px;
       border: none;
+      color: black; /* texto negro dentro inputs */
     }
     button {
-      background-color: #50C878;
+      background-color: #ccc;
       color: black;
       font-weight: bold;
       border: none;
@@ -71,7 +78,7 @@
       cursor: pointer;
     }
     button:hover {
-      background-color: #3abf6e;
+      background-color: #aaa;
     }
   </style>
 </head>
@@ -84,6 +91,7 @@
     <source src="video.mp4" type="video/mp4" />
     Your browser does not support HTML5 video.
   </video>
+  <div id="currentTimeDisplay">Current time: 0:00</div>
 
   <a href="video.mp4" download>Download Video</a>
 
@@ -116,7 +124,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Contador de espectadores
+    // Viewer counter
     const viewerId = "viewer_" + Math.random().toString(36).substring(2);
     const viewerRef = ref(db, "viewers/" + viewerId);
     set(viewerRef, true);
@@ -129,13 +137,13 @@
       counterDisplay.textContent = `🟢 Watching now: ${count}`;
     });
 
-    // Reproducción desde punto aleatorio en bucle
+    // Video play from random position and loop
     const video = document.getElementById("video");
 
     function playFromRandomPosition() {
       const duration = video.duration;
       if (!isNaN(duration) && duration > 10) {
-        const randomTime = Math.random() * (duration - 10); // Deja 10s de margen al final
+        const randomTime = Math.random() * (duration - 10); // leave 10 seconds margin
         video.currentTime = randomTime;
         video.play().catch(() => {});
       }
@@ -143,6 +151,19 @@
 
     video.addEventListener("loadedmetadata", playFromRandomPosition);
     video.addEventListener("ended", playFromRandomPosition);
+
+    // Show current playback time under the video
+    const timeDisplay = document.getElementById("currentTimeDisplay");
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s.toString().padStart(2, "0")}`;
+    }
+
+    video.addEventListener("timeupdate", () => {
+      timeDisplay.textContent = "Current time: " + formatTime(video.currentTime);
+    });
   </script>
 
 </body>
