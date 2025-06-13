@@ -44,7 +44,7 @@
       border: 2px solid #50C878;
       max-width: 400px;
       width: 100%;
-      color: #ccc; /* Texto gris en el formulario */
+      color: #ccc;
     }
     label, input, textarea {
       display: block;
@@ -76,7 +76,7 @@
   <h1>Stream Rvul</h1>
   <div id="contador">🟢 Watching now: 0</div>
 
-  <video id="video" autoplay muted playsinline loop>
+  <video id="video" autoplay muted playsinline controls>
     <source src="video.mp4" type="video/mp4" />
     Your browser does not support HTML5 video.
   </video>
@@ -112,15 +112,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Create unique viewer ID
+    // Viewer tracking
     const viewerId = "viewer_" + Math.random().toString(36).substring(2);
     const viewerRef = ref(db, "viewers/" + viewerId);
-
-    // Mark as connected
     set(viewerRef, true);
     onDisconnect(viewerRef).remove();
 
-    // Update the viewer counter in real time
     const counterDisplay = document.getElementById("contador");
     const viewersRef = ref(db, "viewers");
 
@@ -128,6 +125,20 @@
       const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
       counterDisplay.textContent = `🟢 Watching now: ${count}`;
     });
+
+    // Random start time on load and loop
+    const video = document.getElementById("video");
+
+    function playRandomStart() {
+      const duration = video.duration;
+      if (!isNaN(duration) && duration > 60) {
+        video.currentTime = Math.random() * (duration - 60); // al menos deja 1 minuto al final
+        video.play().catch(() => {});
+      }
+    }
+
+    video.addEventListener("loadedmetadata", playRandomStart);
+    video.addEventListener("ended", playRandomStart);
   </script>
 
 </body>
