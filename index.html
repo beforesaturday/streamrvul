@@ -55,7 +55,7 @@
       border-radius: 5px;
       border: none;
     }
-    button[type="submit"] {
+    button {
       background-color: #50C878;
       color: black;
       font-weight: bold;
@@ -64,7 +64,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    button[type="submit"]:hover {
+    button:hover {
       background-color: #3abf6e;
     }
   </style>
@@ -73,7 +73,7 @@
 
   <h1>Stream Rvul</h1>
 
-  <video id="video" autoplay muted playsinline loop>
+  <video id="video" controls autoplay muted playsinline>
     <source src="video.mp4" type="video/mp4" />
     Tu navegador no soporta video HTML5.
   </video>
@@ -95,10 +95,18 @@
   <script>
     const video = document.getElementById('video');
 
-    // Reproduce desde parte aleatoria cuando esté listo
-    video.addEventListener('loadedmetadata', () => {
-      const randomTime = Math.random() * video.duration;
-      video.currentTime = randomTime;
+    function startVideo() {
+      video.currentTime = Math.random() * video.duration;
+      video.play().catch(() => {
+        // En móviles puede requerir interacción del usuario
+      });
+    }
+
+    video.addEventListener('loadedmetadata', startVideo);
+
+    video.addEventListener('ended', () => {
+      video.currentTime = Math.random() * video.duration;
+      video.play();
     });
   </script>
 
