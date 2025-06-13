@@ -1,60 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stream Rvul - Freestyle Futbol</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stream Rvul</title>
+<style>
+  body {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+  }
+  video {
+    max-width: 100%;
+    height: 540px;
+    border: 3px solid #50C878;
+    border-radius: 8px;
+    outline: none;
+  }
+  a {
+    color: #50C878;
+    font-weight: bold;
+    text-decoration: none;
+    margin-top: 15px;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Stream Rvul</h1>
-  <h2>Freestyle Futbol - Video Loop</h2>
+<video id="video" controls>
+  <source src="video.mp4" type="video/mp4" />
+  Tu navegador no soporta video HTML5.
+</video>
 
-  <video id="video" controls loop>
-    <source src="video.mp4" type="video/mp4" />
-    Tu navegador no soporta video HTML5.
-  </video>
+<a href="video.mp4" download>Descargar Video</a>
 
-  <div id="contador">Reproducciones en bucle: 0</div>
+<script>
+const video = document.getElementById('video');
 
-  <a href="video.mp4" download>Descargar Video</a>
+video.addEventListener('loadedmetadata', () => {
+  video.currentTime = Math.random() * video.duration;
+  video.play();
+});
 
-  <div id="comentarios">
-    <h3>Comentarios</h3>
-    <div id="disqus_thread"></div>
-  </div>
+video.addEventListener('ended', () => {
+  let contador = localStorage.getItem('loopCount');
+  contador = contador ? parseInt(contador) + 1 : 1;
+  localStorage.setItem('loopCount', contador);
 
-  <script>
-    let contador = 0;
-    const video = document.getElementById('video');
-    const contadorDiv = document.getElementById('contador');
-
-    // Cargar contador guardado en localStorage
-    if(localStorage.getItem('loopCount')){
-      contador = parseInt(localStorage.getItem('loopCount'));
-      contadorDiv.textContent = 'Reproducciones en bucle: ' + contador;
-    }
-
-    // Incrementar contador cuando el video termina
-    video.addEventListener('ended', () => {
-      contador++;
-      contadorDiv.textContent = 'Reproducciones en bucle: ' + contador;
-      localStorage.setItem('loopCount', contador);
-    });
-
-    // Configuración Disqus — reemplaza TU_SHORTNAME_DISQUS por tu shortname real
-    var disqus_config = function () {
-      this.page.url = window.location.href;
-      this.page.identifier = 'stream-rvul-freestyle-video';
-    };
-    (function() {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://TU_SHORTNAME_DISQUS.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', +new Date());
-      (d.head || d.body).appendChild(s);
-    })();
-  </script>
+  video.currentTime = Math.random() * video.duration;
+  video.play();
+});
+</script>
 
 </body>
 </html>
