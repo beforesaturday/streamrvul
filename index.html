@@ -44,15 +44,19 @@
       border: 2px solid #50C878;
       max-width: 400px;
       width: 100%;
+      color: #ccc; /* Gris claro para el texto del formulario */
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 16px;
       color: #ccc;
     }
-    label, input, textarea {
+    input, textarea {
       display: block;
       width: 100%;
       margin-bottom: 15px;
       font-size: 16px;
-    }
-    input, textarea {
       padding: 10px;
       border-radius: 5px;
       border: none;
@@ -76,7 +80,7 @@
   <h1>Stream Rvul</h1>
   <div id="contador">🟢 Watching now: 0</div>
 
-  <video id="video" autoplay muted playsinline controls>
+  <video id="video" autoplay muted playsinline>
     <source src="video.mp4" type="video/mp4" />
     Your browser does not support HTML5 video.
   </video>
@@ -112,7 +116,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Viewer tracking
+    // Contador de espectadores
     const viewerId = "viewer_" + Math.random().toString(36).substring(2);
     const viewerRef = ref(db, "viewers/" + viewerId);
     set(viewerRef, true);
@@ -120,25 +124,25 @@
 
     const counterDisplay = document.getElementById("contador");
     const viewersRef = ref(db, "viewers");
-
     onValue(viewersRef, (snapshot) => {
       const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
       counterDisplay.textContent = `🟢 Watching now: ${count}`;
     });
 
-    // Random start time on load and loop
+    // Reproducción desde punto aleatorio en bucle
     const video = document.getElementById("video");
 
-    function playRandomStart() {
+    function playFromRandomPosition() {
       const duration = video.duration;
-      if (!isNaN(duration) && duration > 60) {
-        video.currentTime = Math.random() * (duration - 60); // al menos deja 1 minuto al final
+      if (!isNaN(duration) && duration > 10) {
+        const randomTime = Math.random() * (duration - 10); // Deja 10s de margen al final
+        video.currentTime = randomTime;
         video.play().catch(() => {});
       }
     }
 
-    video.addEventListener("loadedmetadata", playRandomStart);
-    video.addEventListener("ended", playRandomStart);
+    video.addEventListener("loadedmetadata", playFromRandomPosition);
+    video.addEventListener("ended", playFromRandomPosition);
   </script>
 
 </body>
