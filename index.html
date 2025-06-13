@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,6 +44,7 @@
       border: 2px solid #50C878;
       max-width: 400px;
       width: 100%;
+      color: #ccc; /* Texto gris en el formulario */
     }
     label, input, textarea {
       display: block;
@@ -73,25 +74,25 @@
 <body>
 
   <h1>Stream Rvul</h1>
-  <div id="contador">🟢 Viendo ahora: 0</div>
+  <div id="contador">🟢 Watching now: 0</div>
 
   <video id="video" autoplay muted playsinline loop>
     <source src="video.mp4" type="video/mp4" />
-    Tu navegador no soporta video HTML5.
+    Your browser does not support HTML5 video.
   </video>
 
-  <a href="video.mp4" download>Descargar Video</a>
+  <a href="video.mp4" download>Download Video</a>
 
   <form action="https://formspree.io/f/xkgbrenr" method="POST">
-    <h2>Marca tu minuto favorito</h2>
-    <label for="minuto">Minuto exacto (ej: 1:23):</label>
+    <h2>Mark your favorite minute</h2>
+    <label for="minuto">Exact minute (e.g., 1:23):</label>
     <input type="text" id="minuto" name="minuto" required>
 
-    <label for="mensaje">¿Por qué es tu favorito?</label>
+    <label for="mensaje">Why is it your favorite?</label>
     <textarea id="mensaje" name="mensaje" rows="3"></textarea>
 
     <input type="hidden" name="_replyto" value="featuringia@gmail.com" />
-    <button type="submit">Enviar</button>
+    <button type="submit">Submit</button>
   </form>
 
   <script type="module">
@@ -111,23 +112,21 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // ID único por visitante
+    // Create unique viewer ID
     const viewerId = "viewer_" + Math.random().toString(36).substring(2);
     const viewerRef = ref(db, "viewers/" + viewerId);
 
-    // Marca al visitante como conectado
+    // Mark as connected
     set(viewerRef, true);
-
-    // Elimina al salir
     onDisconnect(viewerRef).remove();
 
-    // Actualiza el contador
+    // Update the viewer counter in real time
     const counterDisplay = document.getElementById("contador");
     const viewersRef = ref(db, "viewers");
 
     onValue(viewersRef, (snapshot) => {
       const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
-      counterDisplay.textContent = `🟢 Viendo ahora: ${count}`;
+      counterDisplay.textContent = `🟢 Watching now: ${count}`;
     });
   </script>
 
