@@ -17,23 +17,24 @@
     }
     h1 {
       color: #50C878;
+      margin-bottom: 10px;
+    }
+    #contador {
+      font-weight: bold;
       margin-bottom: 20px;
+      color: #50C878;
     }
     video {
       max-width: 100%;
       height: 540px;
       border: 3px solid #50C878;
       border-radius: 8px;
-      outline: none;
     }
     a {
       color: #50C878;
       font-weight: bold;
       text-decoration: none;
       margin-top: 15px;
-    }
-    a:hover {
-      text-decoration: underline;
     }
     form {
       margin-top: 40px;
@@ -72,8 +73,9 @@
 <body>
 
   <h1>Stream Rvul</h1>
+  <div id="contador">🟢 Viendo ahora: 0</div>
 
-  <video id="video" controls autoplay muted playsinline>
+  <video id="video" autoplay muted playsinline loop>
     <source src="video.mp4" type="video/mp4" />
     Tu navegador no soporta video HTML5.
   </video>
@@ -92,21 +94,40 @@
     <button type="submit">Enviar</button>
   </form>
 
-  <script>
-    const video = document.getElementById('video');
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    function startVideo() {
-      video.currentTime = Math.random() * video.duration;
-      video.play().catch(() => {
-        // En móviles puede requerir interacción del usuario
-      });
-    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfxlqafcFBQV1FTKRuzXglFJBAexDlvws",
+      authDomain: "streamrvul.firebaseapp.com",
+      projectId: "streamrvul",
+      storageBucket: "streamrvul.firebasestorage.app",
+      messagingSenderId: "222288632404",
+      appId: "1:222288632404:web:231f4cca7e3384737eabc1",
+      databaseURL: "https://streamrvul-default-rtdb.europe-west1.firebasedatabase.app"
+    };
 
-    video.addEventListener('loadedmetadata', startVideo);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    video.addEventListener('ended', () => {
-      video.currentTime = Math.random() * video.duration;
-      video.play();
+    // ID único por visitante
+    const viewerId = "viewer_" + Math.random().toString(36).substring(2);
+    const viewerRef = ref(db, "viewers/" + viewerId);
+
+    // Marca al visitante como conectado
+    set(viewerRef, true);
+
+    // Elimina al salir
+    onDisconnect(viewerRef).remove();
+
+    // Actualiza el contador
+    const counterDisplay = document.getElementById("contador");
+    const viewersRef = ref(db, "viewers");
+
+    onValue(viewersRef, (snapshot) => {
+      const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+      counterDisplay.textContent = `🟢 Viendo ahora: ${count}`;
     });
   </script>
 
