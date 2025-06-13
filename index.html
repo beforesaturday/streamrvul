@@ -25,6 +25,18 @@
       border: 3px solid #50C878;
       border-radius: 8px;
       outline: none;
+      display: none;
+    }
+    #start-btn {
+      background-color: #50C878;
+      color: black;
+      font-weight: bold;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-bottom: 20px;
     }
     a {
       color: #50C878;
@@ -55,7 +67,7 @@
       border-radius: 5px;
       border: none;
     }
-    button {
+    button[type="submit"] {
       background-color: #50C878;
       color: black;
       font-weight: bold;
@@ -64,7 +76,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    button:hover {
+    button[type="submit"]:hover {
       background-color: #3abf6e;
     }
   </style>
@@ -73,7 +85,9 @@
 
   <h1>Stream Rvul</h1>
 
-  <video id="video" controls autoplay muted playsinline>
+  <button id="start-btn">Ver video</button>
+
+  <video id="video" controls muted playsinline>
     <source src="video.mp4" type="video/mp4" />
     Tu navegador no soporta video HTML5.
   </video>
@@ -94,15 +108,26 @@
 
   <script>
     const video = document.getElementById('video');
+    const startBtn = document.getElementById('start-btn');
 
-    function startVideo() {
+    function iniciarVideo() {
+      video.style.display = 'block';
+      startBtn.style.display = 'none';
+
       video.currentTime = Math.random() * video.duration;
+
       video.play().catch(() => {
-        // En móviles puede requerir interacción del usuario
+        // Si falla la reproducción, lo dejamos como está
       });
     }
 
-    video.addEventListener('loadedmetadata', startVideo);
+    startBtn.addEventListener('click', iniciarVideo);
+
+    video.addEventListener('loadedmetadata', () => {
+      if (video.autoplay) {
+        iniciarVideo();
+      }
+    });
 
     video.addEventListener('ended', () => {
       video.currentTime = Math.random() * video.duration;
