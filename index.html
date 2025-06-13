@@ -1,76 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Stream Rvul</title>
-<style>
-  body {
-    background-color: black;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  h1 {
-    color: #50C878;
-    margin-bottom: 20px;
-  }
-  video {
-    max-width: 100%;
-    height: 540px;
-    border: 3px solid #50C878;
-    border-radius: 8px;
-    outline: none;
-  }
-  a {
-    color: #50C878;
-    font-weight: bold;
-    text-decoration: none;
-    margin-top: 15px;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stream Rvul</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: #50C878;
+      margin-bottom: 20px;
+    }
+    video {
+      max-width: 100%;
+      height: 540px;
+      border: 3px solid #50C878;
+      border-radius: 8px;
+      outline: none;
+    }
+    a {
+      color: #50C878;
+      font-weight: bold;
+      text-decoration: none;
+      margin-top: 15px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    form {
+      margin-top: 40px;
+      background: #111;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #50C878;
+      max-width: 400px;
+      width: 100%;
+    }
+    label, input, textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    input, textarea {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #50C878;
+      color: black;
+      font-weight: bold;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3abf6e;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Stream Rvul</h1>
+  <h1>Stream Rvul</h1>
 
-<video id="video" controls muted>
-  <source src="video.mp4" type="video/mp4" />
-  Tu navegador no soporta video HTML5.
-</video>
+  <video id="video" controls autoplay muted playsinline>
+    <source src="video.mp4" type="video/mp4" />
+    Tu navegador no soporta video HTML5.
+  </video>
 
-<a href="video.mp4" download>Descargar Video</a>
+  <a href="video.mp4" download>Descargar Video</a>
 
-<script>
-const video = document.getElementById('video');
+  <form action="https://formspree.io/f/xkgbrenr" method="POST">
+    <h2>Marca tu minuto favorito</h2>
+    <label for="minuto">Minuto exacto (ej: 1:23):</label>
+    <input type="text" id="minuto" name="minuto" required>
 
-function startVideo() {
-  video.currentTime = Math.random() * video.duration;
-  video.play().catch(() => {
-    // En caso de bloqueo, intentar mutear y reproducir
-    video.muted = true;
-    video.play();
-  });
-}
+    <label for="mensaje">¿Por qué es tu favorito?</label>
+    <textarea id="mensaje" name="mensaje" rows="3"></textarea>
 
-video.addEventListener('loadedmetadata', startVideo);
+    <input type="hidden" name="_replyto" value="featuringia@gmail.com" />
+    <button type="submit">Enviar</button>
+  </form>
 
-video.addEventListener('ended', () => {
-  let contador = localStorage.getItem('loopCount');
-  contador = contador ? parseInt(contador) + 1 : 1;
-  localStorage.setItem('loopCount', contador);
+  <script>
+    const video = document.getElementById('video');
 
-  video.currentTime = Math.random() * video.duration;
-  video.play();
-});
-</script>
+    function startVideo() {
+      video.currentTime = Math.random() * video.duration;
+      video.play().catch(() => {
+        // En móviles puede requerir interacción del usuario
+      });
+    }
+
+    video.addEventListener('loadedmetadata', startVideo);
+
+    video.addEventListener('ended', () => {
+      video.currentTime = Math.random() * video.duration;
+      video.play();
+    });
+  </script>
 
 </body>
 </html>
